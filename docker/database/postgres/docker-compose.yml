@@ -1,0 +1,12 @@
+services:
+  postgresql:
+    build: ./postgresql
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: score
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: myAwesomePassword
+    volumes:
+      - ./pg_data:/var/lib/postgres
