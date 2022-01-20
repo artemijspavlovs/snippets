@@ -1,0 +1,103 @@
+# taken from kind ingress example : https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: foo-bar-app
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: foo-app
+  labels:
+    app: foo
+  namespace: foo-bar-app
+spec:
+  containers:
+  - name: foo-app
+    privileged: true
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=foo"
+    resources:
+      limits:
+        cpu: 1m
+        memory: 5Mb 
+      requests:
+        cpu: 1m
+        memory: 5Mb 
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: bar-app
+  labels:
+    app: bar
+  namespace: foo-bar-app
+spec:
+  containers:
+  - name: bar-app
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=bar"
+    resources:
+      limits:
+        cpu: 1m
+        memory: 5Mb 
+      requests:
+        cpu: 1m
+        memory: 5Mb 
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: foo-service
+  namespace: foo-bar-app
+spec:
+  selector:
+    app: foo
+  ports:
+  # Default port used by the image
+  - port: 5678
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: bar-service
+  namespace: foo-bar-app
+spec:
+  selector:
+    app: bar
+  ports:
+  # Default port used by the image
+  - port: 5678
+---
+# Ingress that targets local Domain
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: foo.artpav.here
+  namespace: foo-bar-app
+spec:
+  rules:
+  - host: foo.artpav.here
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: foo-service
+          servicePort: 5678
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: bar.artpav.here
+  namespace: foo-bar-app
+spec:
+  rules:
+  - host: bar.artpav.here
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: bar-service
+          servicePort: 5678

@@ -1,0 +1,48 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: psp:default
+rules:
+- apiGroups: ['policy']
+  resources: ['podsecuritypolicies']
+  verbs:     ['use']
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: psp:default:binding
+roleRef:
+  kind: ClusterRole
+  name: psp-cr
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+# Authorize specific service accounts:
+- kind: ServiceAccount
+  name: default
+- kind: ServiceAccount
+  name: renderingservice
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: example
+spec:
+  privileged: false 
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+    - ALL
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'RunAsAny'
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  fsGroup:
+    rule: 'MayRunAs'
+  volumes:
+  - 'configMap'
+  - 'secret'
+  - 'persistentVolumeClaim'
+  - 'emptyDir'
