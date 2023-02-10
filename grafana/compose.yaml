@@ -1,0 +1,12 @@
+# docker compose file named according to the preferred documentation ( https://docs.docker.com/compose/compose-file/#compose-file )
+services:
+  grafana-generic-oauth-google-rolemapping:
+    ports:
+      - "3000:3000"
+    image: grafana/grafana-oss
+    volumes:
+      - type: bind
+        # use either of the supplied .ini files for different scenarios
+        source: ./grafana-generic-google-oauth-rolemapping.ini
+        # default config file locations can be found here: https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#default-paths
+        target: /etc/grafana/grafana.ini
