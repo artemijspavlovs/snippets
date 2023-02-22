@@ -1,0 +1,17 @@
+# docker compose file named according to the preferred documentation ( https://docs.docker.com/compose/compose-file/#compose-file )
+services:
+  prometheus:
+    ports:
+      - "9090:9090"
+    image: prom/prometheus
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/etc/prometheus/sa.json
+    volumes:
+      - type: bind
+        # use either of the supplied .ini files for different scenarios
+        source: ./config.yml
+        # default config file locations can be found here: https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#default-paths
+        target: /etc/prometheus/prometheus.yml
+      - type: bind
+        source: ./sa.json
+        target: /etc/prometheus/sa.json

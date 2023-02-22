@@ -1,0 +1,23 @@
+# example: https://github.com/prometheus/prometheus/blob/release-2.42/config/testdata/conf.good.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: gcp compute
+    metrics_path: /metrics
+    #    static_configs:
+    #      - targets:
+    #          - "34.123.169.174:9100"
+    gce_sd_configs:
+      - project: # replace-with-gcp-project-name
+        zone: # replace-with-gcp-zone # example: us-central1-a
+        port: 9100
+    # https://blog.ruanbekker.com/blog/2022/05/30/prometheus-relabel-config-examples/
+    # https://grafana.com/blog/2022/03/21/how-relabeling-in-prometheus-works/
+    # the following relabel is used to use public IP as the address to monitor the endpoints in a GCP project.
+    relabel_configs:
+      - action: replace
+        source_labels: [ __meta_gce_public_ip ]
+        replacement: "${1}:9100"
+        target_label: __address__
