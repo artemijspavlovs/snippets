@@ -3,21 +3,47 @@ package tasks
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-faker/faker/v4"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
-	"github.com/lib/pq"
 
 	"github.com/artemijspavlovs/snippets/demo/internal/utils"
 )
 
 
 type StringArray []string
+
+func parsePostgreSQLArray(s string) ([]string, error) {
+	trimmed := strings.Trim(s, "{}")
+	if trimmed == "" {
+		return StringArray{}, nil
+	}
+	list := strings.Split(trimmed, ",")
+
+	return list, nil
+}
+
+func (sa *StringArray) Scan(src any) error {
+	str, ok := src.(string)
+	if !ok {
+		return errors.New("source is not a string")
+	}
+
+	a, err := parsePostgreSQLArray(str)
+	if err != nil {
+		return err
+	}
+
+	*sa = a
+	return nil
+}
 
 type Task struct {
 	ID          string      `json:"id"                    db:"id"`
