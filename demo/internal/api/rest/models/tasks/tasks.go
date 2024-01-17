@@ -16,30 +16,33 @@ import (
 	"github.com/artemijspavlovs/snippets/demo/internal/utils"
 )
 
+
+type StringArray []string
+
 type Task struct {
-	ID          string         `json:"id,omitempty"          db:"id"`
-	Title       string         `json:"title,omitempty"       db:"title"`
-	Description string         `json:"description,omitempty" db:"description"`
-	Status      string         `json:"status,omitempty"      db:"status"`
-	CreatedAt   time.Time      `json:"created_at,omitempty"  db:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at,omitempty"  db:"updated_at"`
-	DueDate     time.Time      `json:"due_date,omitempty"    db:"due_date"`
-	Assignees   pq.StringArray `json:"assignees,omitempty"   db:"assignees"`
-	BlockedBy   pq.StringArray `json:"blocked_by,omitempty"  db:"blocked_by"`
-	Tags        pq.StringArray `json:"tags,omitempty"        db:"tags"`
+	ID          string      `json:"id"                    db:"id"`
+	Title       string      `json:"title"                 db:"title"`
+	Description string      `json:"description,omitempty" db:"description"`
+	Status      TaskStatus  `json:"status"                db:"status"`
+	CreatedAt   time.Time   `json:"created_at"            db:"created_at"`
+	CreatedBy   string      `json:"created_by"            db:"created_by"`
+	UpdatedAt   time.Time   `json:"updated_at"            db:"updated_at"`
+	UpdatedBy   string      `json:"updated_by"            db:"updated_by"`
+	DueDate     time.Time   `json:"due_date,omitempty"    db:"due_date"`
+	Tags        StringArray `json:"tags,omitempty"        db:"tags"`
 }
 
 func (t *Task) Generate() Task {
 	t.ID = faker.UUIDDigit()
 	t.Title = faker.Sentence()
 	t.Description = faker.Sentence()
-	t.Status = faker.Word() // change to valid states
-	t.Assignees = []string{faker.UUIDDigit(), faker.UUIDDigit()}
-	t.BlockedBy = []string{faker.UUIDDigit(), faker.UUIDDigit()}
+	t.Status = TaskStatus("todo") // change to valid states
 	t.Tags = []string{faker.Word()}
 
-	t.CreatedAt = utils.GenerateRandomTimestampFromUnix()
+	t.CreatedAt = time.Unix(time.Now().Unix(), 0)
+	t.CreatedBy = faker.Word()
 	t.UpdatedAt = utils.GenerateRandomTimestampFromUnix()
+	t.UpdatedBy = faker.Word()
 	t.DueDate = utils.GenerateRandomTimestampFromUnix()
 
 	j, _ := json.Marshal(t)
@@ -74,8 +77,9 @@ func (h *TaskHandlers) GetAllTasks(c echo.Context) error {
 func (h *TaskHandlers) CreateTask(c echo.Context) error {
 	t := Task{}
 	t.Generate()
-	query := `INSERT INTO tasks (id, title, description, status, created_at, updated_at, due_date, assignees, blocked_by, tags)
-              VALUES (:id, :title, :description, :status, :created_at, :updated_at, :due_date, :assignees, :blocked_by, :tags)`
+
+	query := `INSERT INTO tasks (id, title, description, status, created_at, created_by, updated_at, updated_by, due_date, tags)
+	VALUES (:id, :title, :description, :status, :created_at, :created_by, :updated_at, :updated_by, :due_date, :tags)`
 
 	_, err := h.db.NamedExec(query, t)
 	if err != nil {
