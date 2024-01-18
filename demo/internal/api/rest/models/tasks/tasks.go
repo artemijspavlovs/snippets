@@ -96,6 +96,12 @@ func NewHandlers(db *sqlx.DB) *TaskHandlers {
 	return &TaskHandlers{db}
 }
 
+// @Summary List tasks
+// @Description get tasks
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} Task
+// @Router /tasks [GET]
 func (h *TaskHandlers) GetAllTasks(c echo.Context) error {
 	tasks := []Task{}
 	query := `SELECT * FROM tasks`
@@ -112,6 +118,12 @@ func (h *TaskHandlers) GetAllTasks(c echo.Context) error {
 	return c.JSON(http.StatusOK, tasks)
 }
 
+// @Summary Create task
+// @Description create a new task
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} Task "Task successfully created"
+// @Router /tasks [POST]
 func (h *TaskHandlers) CreateTask(c echo.Context) error {
 	t := Task{}
 	t.Generate()
@@ -131,6 +143,12 @@ func (h *TaskHandlers) CreateTask(c echo.Context) error {
 	return c.JSON(http.StatusCreated, t)
 }
 
+// @Summary Create task
+// @Description create a new task
+// @Produce  json
+// @Param id path string true "Task ID"
+// @Success 200 {object} Task "Task successfully retrieved"
+// @Router /tasks/{id} [GET]
 func (h *TaskHandlers) GetTaskByID(c echo.Context) error {
 	id := c.Param("id")
 	var task Task
@@ -152,6 +170,13 @@ func (h *TaskHandlers) GetTaskByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, task)
 }
 
+// @Summary Create task
+// @Description create a new task
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Task ID"
+// @Success 200 {object} Task "Task successfully retrieved"
+// @Router /tasks/{id} [PUT]
 func (h *TaskHandlers) UpdateTask(c echo.Context) error {
 	id := map[string]any{"id": c.Param("id")}
 
