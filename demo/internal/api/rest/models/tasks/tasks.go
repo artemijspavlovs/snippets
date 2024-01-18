@@ -162,6 +162,7 @@ func (h *TaskHandlers) UpdateTask(c echo.Context) error {
 	`
 	result, err := h.db.NamedExec(query, id)
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(
 			http.StatusInternalServerError,
 			map[string]string{"error": "Failed to update the task"},
@@ -170,6 +171,7 @@ func (h *TaskHandlers) UpdateTask(c echo.Context) error {
 
 	affected, err := result.RowsAffected()
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(
 			http.StatusInternalServerError,
 			map[string]string{"error": "Failed to update the task"},
@@ -181,5 +183,22 @@ func (h *TaskHandlers) UpdateTask(c echo.Context) error {
 			map[string]string{"message": "Task with the requested ID does not exist"})
 	}
 
-	return c.JSON(http.StatusOK, id) // return the updated task
+	var task Task
+	query = `SELECT * FROM tasks WHERE id = $1`
+
+	err = h.db.Get(&task, query, id["id"])
+	if err != nil {
+		fmt.Println(err)
+		if err == sql.ErrNoRows {
+			return c.JSON(http.StatusNotFound,
+				map[string]string{"message": "Task with the requested ID does not exist"})
+		}
+
+		return c.JSON(
+			http.StatusInternalServerError,
+			map[string]string{"message": "Failed to retrieve task with this ID"},
+		)
+	}
+
+	return c.JSON(http.StatusOK, task) // return the updated task
 }
