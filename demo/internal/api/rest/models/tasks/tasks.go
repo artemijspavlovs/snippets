@@ -17,6 +17,14 @@ import (
 	"github.com/artemijspavlovs/snippets/demo/internal/utils"
 )
 
+type TaskStatus string
+
+// const (
+//     StatusPending   TaskStatus = "pending"
+//     StatusInProgress TaskStatus = "in_progress"
+//     StatusCompleted TaskStatus = "completed"
+//	   // etc.
+// )
 
 type StringArray []string
 
