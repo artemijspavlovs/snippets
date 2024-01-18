@@ -1,0 +1,131 @@
+definitions:
+  tasks.Task:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        type: string
+    type: object
+  users.User:
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: get tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/tasks.Task'
+            type: array
+      summary: List tasks
+    post:
+      consumes:
+      - application/json
+      description: create a new task
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task successfully created
+          schema:
+            $ref: '#/definitions/tasks.Task'
+      summary: Create task
+  /tasks/{id}:
+    get:
+      description: create a new task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task successfully retrieved
+          schema:
+            $ref: '#/definitions/tasks.Task'
+      summary: Create task
+    put:
+      consumes:
+      - application/json
+      description: create a new task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task successfully retrieved
+          schema:
+            $ref: '#/definitions/tasks.Task'
+      summary: Create task
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: create a new task
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task successfully retrieved
+          schema:
+            $ref: '#/definitions/users.User'
+      summary: Create a new user
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: create a new task
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully retrieved
+          schema:
+            $ref: '#/definitions/users.User'
+      summary: Get a user
+swagger: "2.0"
