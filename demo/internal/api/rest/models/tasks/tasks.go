@@ -20,6 +20,8 @@ import (
 
 type StringArray []string
 
+// parsePostgreSQLArray function    transforms the default array type retrieved from a PostgreSQL database
+// ( {value, value, value} ) into a go string array []string{value, value, value}
 func parsePostgreSQLArray(s string) ([]string, error) {
 	trimmed := strings.Trim(s, "{}")
 	if trimmed == "" {
@@ -30,6 +32,8 @@ func parsePostgreSQLArray(s string) ([]string, error) {
 	return list, nil
 }
 
+// Scan method    extends the StringArray type with the ability to natively retrieve PostgreSQL rows that
+// include string arrays as their column values
 func (sa *StringArray) Scan(src any) error {
 	str, ok := src.(string)
 	if !ok {
@@ -45,6 +49,10 @@ func (sa *StringArray) Scan(src any) error {
 	return nil
 }
 
+// Task struct   represents an instance of task and maps the struct fields to json and database property names.
+// Additionally, it introduces standardization through custom times where applicable. It applies omitempty tag
+// to the fields that can be either left out or will be populated automatically during creation. for custom type
+// information, refer to the respectful docstrings
 type Task struct {
 	ID          string      `json:"id"                    db:"id"`
 	Title       string      `json:"title"                 db:"title"`
@@ -58,6 +66,8 @@ type Task struct {
 	Tags        StringArray `json:"tags,omitempty"        db:"tags"`
 }
 
+// Generate method    is a helper method that generates a dummy representation of a Task struct with pre-filled
+// fields using fake/random data
 func (t *Task) Generate() Task {
 	t.ID = faker.UUIDDigit()
 	t.Title = faker.Sentence()
@@ -76,10 +86,12 @@ func (t *Task) Generate() Task {
 	return *t
 }
 
+// TaskHandlers struct    provides a proxy for reusing the instance of sqlx.DB in task specific http handlers
 type TaskHandlers struct {
 	db *sqlx.DB
 }
 
+// NewHandlers function    constructor function for TaskHandlers
 func NewHandlers(db *sqlx.DB) *TaskHandlers {
 	return &TaskHandlers{db}
 }
