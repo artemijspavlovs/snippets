@@ -190,7 +190,7 @@ func (h *TaskHandlers) UpdateTask(c echo.Context) error {
 	id := map[string]any{"id": c.Param("id")}
 
 	query := `
-		UPDATE tasks 
+		UPDATE tasks
 		SET title = 'new title'
 		WHERE id = :id
 	`
