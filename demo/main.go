@@ -11,6 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 
+	_ "github.com/artemijspavlovs/snippets/demo/docs"
 	"github.com/artemijspavlovs/snippets/demo/internal/api/rest/server"
 )
 

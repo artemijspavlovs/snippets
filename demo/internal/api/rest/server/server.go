@@ -4,6 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/artemijspavlovs/snippets/demo/internal/api/rest/models/tasks"
 	"github.com/artemijspavlovs/snippets/demo/internal/api/rest/models/users"
@@ -28,6 +29,9 @@ func New(db *sqlx.DB) *Server {
 func (s *Server) SetupRoutes(db *sqlx.DB) {
 	taskHandlers := tasks.NewHandlers(db)
 	userHandlers := users.NewHandlers(db)
+
+	// API docs
+	s.Router.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// TODO: create specific API endpoints for adding assignees or dependencies,
 	// POST /tasks/:id/assignees and POST /tasks/:id/dependencies same for removing or updating these
