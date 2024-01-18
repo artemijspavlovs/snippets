@@ -12,4 +12,3 @@ resource "google_project_service" "this" {
 
   project = var.gcp_project
 }
-
