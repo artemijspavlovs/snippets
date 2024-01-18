@@ -178,6 +178,7 @@ func (h *TaskHandlers) GetTaskByID(c echo.Context) error {
 // @Success 200 {object} Task "Task successfully retrieved"
 // @Router /tasks/{id} [PUT]
 func (h *TaskHandlers) UpdateTask(c echo.Context) error {
+	// TODO: handle the update and get queries in a single transaction
 	id := map[string]any{"id": c.Param("id")}
 
 	query := `
