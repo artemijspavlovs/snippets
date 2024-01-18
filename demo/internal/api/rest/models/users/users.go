@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-faker/faker/v4"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
@@ -11,6 +12,13 @@ import (
 type User struct {
 	ID       string `json:"id"       db:"id"`
 	Username string `json:"username" db:"username"`
+}
+
+func (u *User) Generate() User {
+	u.ID = faker.UUIDDigit()
+	u.Username = faker.Word()
+
+	return *u
 }
 
 type UserHandlers struct {
